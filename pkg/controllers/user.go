@@ -8,9 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const secretKey = "secret"
-const currentUser = "currentUser"
-
 func GetUser(c *fiber.Ctx) error {
 	var user models.User
 	if id, err := utils.ValidateJWT(c); err != nil {

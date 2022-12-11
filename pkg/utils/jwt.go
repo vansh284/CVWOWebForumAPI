@@ -7,30 +7,30 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/vansh284/CVWOWebForumAPI/pkg/config"
 )
 
-const currentUser = "currentUser"
-const secretKey = "secret"
+var envMap map[string]string = config.GetEnvMap()
 
 func GenerateJWT(c *fiber.Ctx, id int) error {
 	claims := &jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)), Issuer: strconv.Itoa(id)}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	if tokenString, err := token.SignedString([]byte(secretKey)); err != nil {
+	if tokenString, err := token.SignedString([]byte(envMap["SECRET_KEY"])); err != nil {
 		return err
 	} else {
-		cookie := fiber.Cookie{Name: currentUser, Value: tokenString, Expires: time.Now().Add(time.Hour * 24), HTTPOnly: true}
+		cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: tokenString, Expires: time.Now().Add(time.Hour * 24), HTTPOnly: true}
 		c.Cookie(&cookie)
 		return err
 	}
 }
 
 func ValidateJWT(c *fiber.Ctx) (int, error) {
-	tokenString := c.Cookies(currentUser)
+	tokenString := c.Cookies(envMap["CURRENT_USER"])
 	if token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
-		return []byte(secretKey), nil
+		return []byte(envMap["SECRET_`KEY"]), nil
 	}); err != nil {
 		return 0, err
 	} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -42,6 +42,6 @@ func ValidateJWT(c *fiber.Ctx) (int, error) {
 }
 
 func ExpireCookie(c *fiber.Ctx) {
-	cookie := fiber.Cookie{Name: currentUser, Value: "", Expires: time.Now().Add(-time.Hour), HTTPOnly: true}
+	cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: "", Expires: time.Now().Add(-time.Hour), HTTPOnly: true}
 	c.Cookie(&cookie)
 }

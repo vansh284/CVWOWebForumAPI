@@ -10,10 +10,12 @@ import (
 
 func main() {
 	app := fiber.New()
+	config.SetUpEnvironment()
+	envMap := config.GetEnvMap()
 	routes.InitThreadRoutes(app)
 	config.ConnectDB()
 	db := config.GetDB()
 	db.AutoMigrate(&models.User{}, &models.Thread{}, &models.Comment{})
 	app.Use(cors.New(cors.Config{AllowCredentials: true}))
-	app.Listen(":3000")
+	app.Listen(envMap["LOCAL_PORT"])
 }

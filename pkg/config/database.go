@@ -8,7 +8,8 @@ import (
 var db *gorm.DB
 
 func ConnectDB() {
-	dsn := "root:Averagevs@tcp(127.0.0.1:3306)/cvwowebforum?charset=utf8mb4&parseTime=True&loc=Local"
+	envMap = GetEnvMap()
+	dsn := envMap["DSN"]
 	if d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{}); err != nil {
 		panic(err)
 	} else {
