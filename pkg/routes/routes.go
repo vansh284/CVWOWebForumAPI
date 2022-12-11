@@ -6,11 +6,13 @@ import (
 )
 
 func InitThreadRoutes(app *fiber.App) {
-	app.Get("/users/:username", controllers.GetUser)                                    //Retrives user :username
+	app.Get("/users", controllers.GetUser)                                              //Retrives user :username
 	app.Post("/users", controllers.CreateUser)                                          //Creates user
-	app.Patch("/users/username/:username", controllers.UpdateUserUsername)              //Edits username of user with {username}
-	app.Patch("/users/password/:username", controllers.UpdateUserPassword)              //Edits password of user with {username}
-	app.Delete("/users/:username", controllers.DeleteUser)                              //Deletes user with {username}
+	app.Post("/login", controllers.Login)                                               //Logs user in
+	app.Post("/logout", controllers.Logout)                                             //Logs user out
+	app.Patch("/users/username", controllers.UpdateUserUsername)                        //Edits username of user
+	app.Patch("/users/password", controllers.UpdateUserPassword)                        //Edits password of user
+	app.Delete("/users", controllers.DeleteUser)                                        //Deletes user
 	app.Get("/threads", controllers.GetThreads)                                         //Retrives list of threads
 	app.Post("/threads", controllers.CreateThread)                                      //Creates thread
 	app.Put("/threads/:id<int>", controllers.EditThread)                                //Edits Thread {id}. Thread content and tag required in body.
