@@ -55,7 +55,7 @@ func Login(c *fiber.Ctx) error {
 	} else if err := utils.GenerateJWT(c, int(realUser.ID)); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 	}
-	return c.JSON("Logged In")
+	return c.JSON(realUser)
 }
 
 func Logout(c *fiber.Ctx) error {

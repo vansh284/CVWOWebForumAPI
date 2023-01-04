@@ -54,6 +54,8 @@ func EditThread(c *fiber.Ctx) error {
 	} else {
 		oldThread.Content = newThread.Content
 		oldThread.Tag = newThread.Tag
+		oldThread.Title = newThread.Title
+		oldThread.Image = newThread.Image
 		if err := db.Save(&oldThread).Error; err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 		}
