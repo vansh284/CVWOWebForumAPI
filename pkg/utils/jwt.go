@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -34,11 +33,6 @@ func GenerateJWT(c *fiber.Ctx, id int) error {
 
 func ValidateJWT(c *fiber.Ctx) (int, error) {
 	tokenString := c.Cookies(envMap["CURRENT_USER"])
-	if tokenString == "" {
-		fmt.Println("hi")
-	} else {
-		fmt.Println(tokenString)
-	}
 	if token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")

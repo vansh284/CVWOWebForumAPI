@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/vansh284/CVWOWebForumAPI/pkg/config"
 	"github.com/vansh284/CVWOWebForumAPI/pkg/models"
@@ -12,7 +10,6 @@ import (
 
 func GetUser(c *fiber.Ctx) error {
 	var user models.User
-	fmt.Println("getuser")
 	if id, err := utils.ValidateJWT(c); err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
 	} else if err := utils.FindUserByID(id, &user); err != nil {
@@ -67,57 +64,4 @@ func Logout(c *fiber.Ctx) error {
 	}
 	utils.ExpireCookie(c)
 	return c.JSON("Logged Out")
-}
-
-func DeleteUser(c *fiber.Ctx) error {
-	db := config.GetDB()
-	var user models.User
-	if id, err := utils.ValidateJWT(c); err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
-	} else if err := utils.FindUserByID(id, &user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	} else if err := db.Delete(&user).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	} else if err := db.Where("user_id = ?", id).Delete(&models.Thread{}).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	} else if err := db.Where("user_id = ?", id).Delete(&models.Comment{}).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	}
-	utils.ExpireCookie(c)
-	return c.JSON(user)
-}
-
-func UpdateUserUsername(c *fiber.Ctx) error {
-	db := config.GetDB()
-	var user, oldUser models.User
-	if id, err := utils.ValidateJWT(c); err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
-	} else if err := c.BodyParser(&oldUser); err != nil { //Known that doesn't cause an error when the JSON provided cannot be binded to the struct, it just returns an empty string. Only causes error if the JSON is invalid.
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	} else if err := utils.FindUserByID(id, &user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	} else if err := db.Model(&user).Update("username", oldUser.Username).Error; err != nil { //Add check to make sure username is not empty (will probably be part of some validation helper somwhere)
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	}
-	return c.JSON(user)
-}
-
-func UpdateUserPassword(c *fiber.Ctx) error {
-	db := config.GetDB()
-	var (
-		user     models.User
-		password models.Password
-	)
-	if id, err := utils.ValidateJWT(c); err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
-	} else if err := c.BodyParser(&password); err != nil { //Known that doesn't cause an error when the JSON provided cannot be binded to the struct, it just returns an empty string. Only causes error if the JSON is invalid.
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	} else if err := utils.FindUserByID(id, &user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	} else if password, err := bcrypt.GenerateFromPassword([]byte(password.Password), 10); err != nil { //Add check to make sure password is not empty (will probably be part of some validation helper somwhere)
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	} else if err := db.Model(&user).Update("password", password).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err.Error())
-	}
-	return c.JSON(user)
 }

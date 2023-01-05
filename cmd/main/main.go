@@ -15,7 +15,7 @@ func main() {
 	config.ConnectDB()
 	db := config.GetDB()
 	db.AutoMigrate(&models.User{}, &models.Thread{}, &models.Comment{})
-	app.Use(cors.New(cors.Config{AllowCredentials: true})) //update cors to not be *, only my front end url
+	app.Use(cors.New(cors.Config{AllowCredentials: true, AllowOrigins: "https://cvwo-web-forum.onrender.com"}))
 	routes.InitThreadRoutes(app)
 	app.Listen(envMap["LOCAL_PORT"])
 }
