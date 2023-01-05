@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/vansh284/CVWOWebForumAPI/pkg/config"
 	"github.com/vansh284/CVWOWebForumAPI/pkg/models"
@@ -8,6 +10,7 @@ import (
 )
 
 func GetThreads(c *fiber.Ctx) error {
+	fmt.Println("getthreads")
 	db := config.GetDB()
 	var threads []models.Thread
 	if _, err := utils.ValidateJWT(c); err != nil {

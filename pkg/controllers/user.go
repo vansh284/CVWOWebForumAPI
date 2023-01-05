@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/vansh284/CVWOWebForumAPI/pkg/config"
 	"github.com/vansh284/CVWOWebForumAPI/pkg/models"
@@ -10,6 +12,7 @@ import (
 
 func GetUser(c *fiber.Ctx) error {
 	var user models.User
+	fmt.Println("getuser")
 	if id, err := utils.ValidateJWT(c); err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(err.Error())
 	} else if err := utils.FindUserByID(id, &user); err != nil {
