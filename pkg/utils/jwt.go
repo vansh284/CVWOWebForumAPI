@@ -18,7 +18,7 @@ func GenerateJWT(c *fiber.Ctx, id int) error {
 	if tokenString, err := token.SignedString([]byte(envMap["SECRET_KEY"])); err != nil {
 		return err
 	} else {
-		cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: tokenString, Expires: time.Now().Add(time.Hour * 24), HTTPOnly: true}
+		cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: tokenString, Expires: time.Now().Add(time.Hour * 24), HTTPOnly: true, Domain: "cvwo-web-forum.onrender.com"}
 		c.Cookie(&cookie)
 		return err
 	}
