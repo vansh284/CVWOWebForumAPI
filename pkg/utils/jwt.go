@@ -23,9 +23,7 @@ func GenerateJWT(c *fiber.Ctx, id int) error {
 			Value:    tokenString,
 			Expires:  time.Now().Add(time.Hour * 24),
 			HTTPOnly: true,
-			Domain:   "cvwo-web-forum.onrender.com",
-			Secure:   true,
-			SameSite: "None"}
+		}
 		c.Cookie(&cookie)
 		return err
 	}
@@ -49,6 +47,7 @@ func ValidateJWT(c *fiber.Ctx) (int, error) {
 }
 
 func ExpireCookie(c *fiber.Ctx) {
-	cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: "", Expires: time.Now().Add(-time.Hour), HTTPOnly: true}
+	tokenString := c.Cookies(envMap["CURRENT_USER"])
+	cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: tokenString, Expires: time.Now().Add(-time.Hour), HTTPOnly: true}
 	c.Cookie(&cookie)
 }
