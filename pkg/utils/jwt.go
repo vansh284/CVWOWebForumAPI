@@ -50,6 +50,14 @@ func ValidateJWT(c *fiber.Ctx) (int, error) {
 
 func ExpireCookie(c *fiber.Ctx) {
 	tokenString := c.Cookies(envMap["CURRENT_USER"])
-	cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: tokenString, Expires: time.Now().Add(-time.Hour), HTTPOnly: true}
+	cookie := fiber.Cookie{
+		Name:     envMap["CURRENT_USER"],
+		Value:    tokenString,
+		Expires:  time.Now().Add(-time.Hour),
+		HTTPOnly: true,
+		Domain:   "cvwo-web-forum.onrender.com",
+		Secure:   true,
+		SameSite: "None",
+	}
 	c.Cookie(&cookie)
 }
