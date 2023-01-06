@@ -49,6 +49,7 @@ func ValidateJWT(c *fiber.Ctx) (int, error) {
 }
 
 func ExpireCookie(c *fiber.Ctx) {
-	cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: "", Expires: time.Now().Add(-time.Hour), HTTPOnly: true}
+	tokenString := c.Cookies(envMap["CURRENT_USER"])
+	cookie := fiber.Cookie{Name: envMap["CURRENT_USER"], Value: tokenString, Expires: time.Now().Add(-time.Hour), HTTPOnly: true}
 	c.Cookie(&cookie)
 }
