@@ -20,7 +20,7 @@ func GetCommentsT(c *fiber.Ctx) error {
 	return c.JSON(comments)
 }
 
-func CreateComment(c *fiber.Ctx) error { //Provide threadID in the body
+func CreateComment(c *fiber.Ctx) error {
 	db := config.GetDB()
 	var comment models.Comment
 	var user models.User

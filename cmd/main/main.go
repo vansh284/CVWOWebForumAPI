@@ -15,7 +15,7 @@ func main() {
 	config.ConnectDB()
 	db := config.GetDB()
 	db.AutoMigrate(&models.User{}, &models.Thread{}, &models.Comment{})
-	app.Use(cors.New(cors.Config{AllowCredentials: true, AllowOrigins: "https://cvwo-web-forum.onrender.com"}))
+	app.Use(cors.New(cors.Config{AllowCredentials: true, AllowOrigins: envMap["FRONTEND_URL"]}))
 	routes.InitThreadRoutes(app)
-	app.Listen(envMap["LOCAL_PORT"])
+	app.Listen(":" + envMap["LOCAL_PORT"])
 }

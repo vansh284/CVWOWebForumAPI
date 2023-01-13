@@ -13,6 +13,7 @@ import (
 var envMap map[string]string = config.GetEnvMap()
 
 func GenerateJWT(c *fiber.Ctx, id int) error {
+	// Helper functions that generates a jwt for the user and stores it in a HTTP-ONLY Cookie.
 	claims := &jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)), Issuer: strconv.Itoa(id)}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	if tokenString, err := token.SignedString([]byte(envMap["SECRET_KEY"])); err != nil {
@@ -23,7 +24,7 @@ func GenerateJWT(c *fiber.Ctx, id int) error {
 			Value:    tokenString,
 			Expires:  time.Now().Add(time.Hour * 24),
 			HTTPOnly: true,
-			Domain:   "cvwo-web-forum.onrender.com",
+			Domain:   envMap["FRONTEND_URL"],
 			Secure:   true,
 			SameSite: "None"}
 		c.Cookie(&cookie)
@@ -32,6 +33,7 @@ func GenerateJWT(c *fiber.Ctx, id int) error {
 }
 
 func ValidateJWT(c *fiber.Ctx) (int, error) {
+	// Helper function that validates if the HTTP-Only cookie sent has a valid JWT.
 	tokenString := c.Cookies(envMap["CURRENT_USER"])
 	if token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -49,13 +51,14 @@ func ValidateJWT(c *fiber.Ctx) (int, error) {
 }
 
 func ExpireCookie(c *fiber.Ctx) {
+	// Helper function that expires the current cookie
 	tokenString := c.Cookies(envMap["CURRENT_USER"])
 	cookie := fiber.Cookie{
 		Name:     envMap["CURRENT_USER"],
 		Value:    tokenString,
 		Expires:  time.Now().Add(-time.Hour),
 		HTTPOnly: true,
-		Domain:   "cvwo-web-forum.onrender.com",
+		Domain:   envMap["FRONTEND_URL"],
 		Secure:   true,
 		SameSite: "None",
 	}

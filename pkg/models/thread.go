@@ -13,5 +13,4 @@ type Thread struct {
 	Image    string    `json:"image"`
 	Comments []Comment `json:"comments"`
 	UserID   uint      `json:"user_id"`
-	//Upvote, Title
 }
